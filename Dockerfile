@@ -12,6 +12,7 @@ RUN apk add --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/c
 RUN apk add --no-cache libimagequant-dev
 RUN apk add --no-cache vips-dev
 RUN apk add --no-cache --virtual .runtime-deps graphviz
+RUN apk add --no-cache nginx
 
 COPY package*.json .
 COPY yarn.lock .
@@ -25,7 +26,8 @@ RUN apk del .build-deps
 COPY *.js ./
 COPY lib/*.js lib/
 COPY LICENSE .
+COPY nginx.conf /etc/nginx/nginx.conf
 
-EXPOSE 3400
+EXPOSE 80
 
 ENTRYPOINT ["node", "--max-http-header-size=65536", "index.js"]
