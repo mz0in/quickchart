@@ -36,9 +36,19 @@ As you can see, the Javascript or JSON object contained in the URL defines the c
 
 **Go to  the full [QuickChart documentation](https://quickchart.io/documentation) to learn more.  See [gallery](https://quickchart.io/gallery/) for examples.**
 
-## Configuring your chart
+## Configuring your chart and NGINX Load Balancing
 
-The chart configuration object is based on the popular Chart.js API.  Check out the [Chart.js documentation](https://www.chartjs.org/docs/2.9.4/charts/) for more information on how to customize your chart, or see [QuickChart documentation](https://quickchart.io/documentation#parameters) for API options.
+The chart configuration object is based on the popular Chart.js API.
+
+The NGINX load balancing configuration in `nginx.conf` works by defining an upstream server block with multiple server entries to distribute incoming requests:
+```
+upstream quickchart {
+    server quickchart1:3400;
+    server quickchart2:3400;
+    server quickchart3:3400;
+}
+```
+Requests are forwarded to the available servers on a rotating basis, achieving load distribution. To customize this configuration, add or remove `server` lines or adjust server names and port numbers according to your deployment setup.  Check out the [Chart.js documentation](https://www.chartjs.org/docs/2.9.4/charts/) for more information on how to customize your chart, or see [QuickChart documentation](https://quickchart.io/documentation#parameters) for API options.
 
 QuickChart includes many Chart.js plugins that allow you to add chart annotations, data labels, and more: `chartjs-plugin-datalabels`, `chartjs-plugin-annotation`, `chartjs-plugin-piechart-outlabels`, `chartjs-chart-radial-gauge`, `chartjs-chart-box-and-violin-plot `, `chartjs-plugin-doughnutlabel`, and `chartjs-plugin-colorschemes`.
 
@@ -85,9 +95,25 @@ Once you have system dependencies installed, run `yarn install` or `npm install`
 
 `node index.js` will start the server on port 3400.  Set your `PORT` environmental variable to change this port.
 
-## Docker
+## Docker and NGINX Setup
 
 A docker image is available on dockerhub at [ianw/quickchart](https://hub.docker.com/r/ianw/quickchart).
+
+To utilize the NGINX setup with QuickChart, follow these steps:
+
+1. Build the Docker image:
+```
+docker build -t yourname/quickchart .
+```
+2. Run a container from the image, exposing port 80:
+```
+docker run -p 80:80 yourname/quickchart
+```
+3. To send requests to the application via NGINX, use the following pattern:
+```
+curl http://localhost/chart?c={...}
+```
+Replace `{...}` with the appropriate Chart.js configuration.
 
 #### Building
 
