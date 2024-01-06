@@ -58,9 +58,21 @@ if (process.env.RATE_LIMIT_PER_MIN) {
 }
 
 app.get('/', (req, res) => {
-  res.send(
-    'ZChart is running!... That's it ',
-  );
+  res.send(`
+    <html>
+      <head>
+        <style>
+          body {
+            background-image: url('/background.jpg');
+            background-size: cover;
+          }
+        </style>
+      </head>
+      <body>
+        ZChart is running!... That's it
+      </body>
+    </html>
+  `);
 });
 
 app.post('/telemetry', (req, res) => {
